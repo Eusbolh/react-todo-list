@@ -1,7 +1,20 @@
 var express = require('express');
 var path = require('path');
 
+var config = require('../webpack.config.js');
+var webpack = require('webpack');
+var webpackDevMiddleWare = require('webpack-dev-middleware');
+var webpackHotMiddleWare = require('webpack-hot-middleware');
+
 var app = express();
+
+// app.use(webpack in dev mode)
+// we want to do this kind of thing to create our hot module reloading.
+// but as far as i understand, we can use hot module reloading instead of this.
+var compiler = webpack(config);
+
+app.use(webpackDevMiddleWare(compiler, {noInfo: true, publicPath: config.output.publicPath}));
+app.use(webpackHotMiddleWare(compiler));
 
 app.use(express.static('./dist'));
 
